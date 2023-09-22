@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Directory</title>
+
+    <link rel="icon" href="libs/favicon/favicon.png" type="image/x-icon">
+
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="webfonts/all.min.css">
+
+    <link rel="stylesheet" href="libs/css/style.css">
+
+    <link rel="stylesheet" href="libs/css/animate.min.css">
+
+    <script type="application/javascript" src="jquery/jquery-3.6.4.min.js"></script>
+
+</head>
+
+<body class="overflow-hidden">
+
+    <!-- LAYOUT -->
+    <div class="container-fluid d-flex flex-column vh-100 overflow-auto">
+
+        <div class="row mb-3">
+            <div class="col-3 text-center align-items-center">
+            </div>
+            <div class="col-6">
+                <div class="input-group rounded mt-2 justify-content-center"  >
+                    <form id="search-form">
+                        <div class="input-group mt-2">
+                        <input type="text" id="search" name="query" class="form-control rounded" placeholder="Search"
+                            aria-label="Search" aria-describedby="search-addon" />
+                        <button id="search-btn" type="submit" class="btn btn-primary-outline"><i
+                                class="fas fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-3 mt-2 text-end">
+                <button class="btn btn-white mb-2" id="add" type="button"><h1>+</h1></button>
+            </div>
+        </div>
+        <div class="row sticky-top mb-5">
+            <div class="col-12">
+                <ul class="nav nav-tabs position-sticky sticky-top bg-light" id="navigation" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="employees-tab" data-bs-toggle="tab"
+                            data-bs-target="#employees" type="button" role="tab" aria-controls="employees"
+                            aria-selected="true">Employees</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="department-tab" data-bs-toggle="tab" data-bs-target="#department"
+                            type="button" role="tab" aria-controls="department"
+                            aria-selected="false">Departments</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location"
+                            type="button" role="tab" aria-controls="location" aria-selected="false">Locations</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="navigationContent">
+                    <div class="tab-pane fade show active" id="employees" role="tabpanel"
+                        aria-labelledby="employees-tab">
+                    </div>
+                    <div class="tab-pane fade" id="department" role="tabpanel" aria-labelledby="department-tab"></div>
+                    <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row flex-grow-1">
+
+            <div class="col-12 text-center">
+
+                <div class="row">
+                    <div class="col-9 text-start">
+                        <h4 id="title">Employees</h4>
+                    </div>
+                    <div class="d-flex col-3 text-center align-items-end justify-content-center">
+                        <div class="search form-inline mb-3">
+                            <select class="form-select form-select-sm sort">
+                                <option value="L-F">Last-First</option>
+                                <option value="F-L">First-Last</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table directory-table">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="preloader"></div>
+
+
+    <!-- MODALS -->
+    <!-- Edit Employee -->
+    <!-- the first of the data-bs attributes removes the backdrop and prevents the modal from being closed by clicking outside of it. The second disables the ESC key preventing it from closing the modal -->
+
+    <div id="editEmployeeModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="editEmployeeLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-secondary bg-gradient text-white">
+                    <h5 class="modal-title">Edit employee</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="editEmployeeForm">
+
+                        <input type="hidden" id="employeeID">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="firstName-edit" placeholder="First name"
+                                required>
+                            <label for="firstName">First name</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="lastName-edit" placeholder="Last name" required>
+                            <label for="lastName">Last name</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="jobTitle-edit" placeholder="Job title" required>
+                            <label for="jobTitle">Job Title</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="emailAddress-edit" placeholder="Email address"
+                                required>
+                            <label for="emailAddress">Email Address</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <select class="form-select" id="department-select-edit" placeholder="Department">
+                            </select>
+                            <label for="department-select">Department</label>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" form="editEmployeeForm"
+                        class="btn btn-outline-secondary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm myBtn"
+                        data-bs-dismiss="modal">CANCEL</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Add Employee -->
+    <!-- the first of the data-bs attributes removes the backdrop and prevents the modal from being closed by clicking outside of it. The second disables the ESC key preventing it from closing the modal -->
+
+    <div id="addEmployeeModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="addEmployeeLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-secondary bg-gradient text-white">
+                    <h5 class="modal-title">Add employee</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="addEmployeeForm">
+
+                        <input type="hidden" id="employeeID-add">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="firstName-add" placeholder="First name"
+                                required>
+                            <label for="firstName">First name</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="lastName-add" placeholder="Last name" required>
+                            <label for="lastName">Last name</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="jobTitle-add" placeholder="Job title" required>
+                            <label for="jobTitle">Job Title</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="emailAddress-add" placeholder="Email address"
+                                required>
+                            <label for="emailAddress">Email Address</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <select class="form-select" id="department-select-add" placeholder="Department">
+                            </select>
+                            <label for="department-select">Department</label>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" form="addEmployeeForm"
+                        class="btn btn-outline-secondary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm myBtn"
+                        data-bs-dismiss="modal">CANCEL</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- User Already Exists Modal -->
+    <div class="modal fade" id="user-exists-modal" tabindex="-1" role="dialog" aria-labelledby="user-exists-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title d-flex flex-row" id="user-exists-modal-label">
+                        <h5 id="user-exists">Sorry, this user already exists! Please try a different Email</h5>
+                    </div>
+                    <button type="button" id="close-exists" class="btn-close btn-close-black" data-bs-dismiss="modal"
+                        aria-label="Close"> </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel-exists" class="btn btn-secondary" data-bs-dismiss="modal"
+                        aria-label="Cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Department -->
+    <!-- the first of the data-bs attributes removes the backdrop and prevents the modal from being closed by clicking outside of it. The second disables the ESC key preventing it from closing the modal -->
+
+    <div id="addDepartmentModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="addDepartmentLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-secondary bg-gradient text-white">
+                    <h5 class="modal-title">Add Department</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="addDepartmentForm">
+
+                        <input type="hidden" id="departmentID-add">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="departmentName-add"
+                                placeholder="Department name" required>
+                            <label for="departmentName">Department name</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <select class="form-select" id="location-select-add" placeholder="Location">
+                            </select>
+                            <label for="location-select-add">Location</label>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" form="addDepartmentForm"
+                        class="btn btn-outline-secondary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm myBtn"
+                        data-bs-dismiss="modal">CANCEL</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Edit Department -->
+    <!-- the first of the data-bs attributes removes the backdrop and prevents the modal from being closed by clicking outside of it. The second disables the ESC key preventing it from closing the modal -->
+
+    <div id="editDepartmentModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="editDepartmentLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-secondary bg-gradient text-white">
+                    <h5 class="modal-title">Edit Department</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="editDepartmentForm">
+
+                        <input type="hidden" id="departmentID-edit">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="departmentName-edit"
+                                placeholder="Department name" required>
+                            <label for="departmentName">Department name</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <select class="form-select" id="location-select-edit" placeholder="Location">
+                            </select>
+                            <label for="location-select-edit">Location</label>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" form="editDepartmentForm"
+                        class="btn btn-outline-secondary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm myBtn"
+                        data-bs-dismiss="modal">CANCEL</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Add Location -->
+    <!-- the first of the data-bs attributes removes the backdrop and prevents the modal from being closed by clicking outside of it. The second disables the ESC key preventing it from closing the modal -->
+
+    <div id="addLocationModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="addLocationLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-secondary bg-gradient text-white">
+                    <h5 class="modal-title">Add Location</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="addLocationForm">
+
+                        <input type="hidden" id="locationID-add">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="locationName-add" placeholder="Location name"
+                                required>
+                            <label for="departmentName">Location name</label>
+                        </div>
+
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" form="addLocationForm"
+                        class="btn btn-outline-secondary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm myBtn"
+                        data-bs-dismiss="modal">CANCEL</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Edit Location -->
+    <!-- the first of the data-bs attributes removes the backdrop and prevents the modal from being closed by clicking outside of it. The second disables the ESC key preventing it from closing the modal -->
+
+    <div id="editLocationModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="editLocationLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable">
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header bg-secondary bg-gradient text-white">
+                    <h5 class="modal-title">Edit Location</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="editLocationForm">
+
+                        <input type="hidden" id="locationID-edit">
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="locationName-edit" placeholder="Location name"
+                                required>
+                            <label for="locationName">Location name</label>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" form="editLocationForm"
+                        class="btn btn-outline-secondary btn-sm myBtn">SAVE</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm myBtn"
+                        data-bs-dismiss="modal">CANCEL</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Cant delete -->
+    <div id="cantDeleteModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false"
+        aria-labelledby="cantDeleteModalLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+            <!-- As the backdrop is disabled we can use the Bootstrap shadow class to add definition to the dialog -->
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    You cannot remove the entry for <span id="cantDeleteName" class="fw-bold"></span> because it has
+                    <span id="pc" class="fw-bold"></span> assigned to it.
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Are you Sure Delete Employee Modal -->
+
+    <div id="areYouSureDeleteEmpModal" class="modal fade" tabindex="-1" data-bs-backdrop="false"
+        data-bs-keyboard="false" aria-labelledby="areYouSureDeleteEmpLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+            <!-- As the backdrop is disabled we can use the Bootstrap shadow class to add definition to the dialog -->
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="deleteEmployeeID">
+
+                    Are you sure that you want to remove the entry for <span id="areYouSureNameEmp"
+                        class="fw-bold"></span>?
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="confirm-delete-employee" class="btn btn-outline-secondary myBtn"
+                        data-bs-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-outline-secondary myBtn" data-bs-dismiss="modal">No</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Are you Sure Delete Department Modal -->
+
+    <div id="areYouSureDeleteDeptModal" class="modal fade" tabindex="-1" data-bs-backdrop="false"
+        data-bs-keyboard="false" aria-labelledby="areYouSureDeleteDeptLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+            <!-- As the backdrop is disabled we can use the Bootstrap shadow class to add definition to the dialog -->
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="deleteDepartmentID">
+
+                    Are you sure that you want to remove the entry for <span id="areYouSureNameDept"
+                        class="fw-bold"></span>?
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="confirm-delete-department" class="btn btn-outline-secondary myBtn"
+                        data-bs-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-outline-secondary myBtn" data-bs-dismiss="modal">No</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Are you Sure Delete Location Modal -->
+
+    <div id="areYouSureDeleteLocationModal" class="modal fade" tabindex="-1" data-bs-backdrop="false"
+        data-bs-keyboard="false" aria-labelledby="areYouSureDeleteLocationLabel" aria-hidden="true">
+
+        <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
+        <!--   that the header and footer are always on display by making the body scroll -->
+
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+            <!-- As the backdrop is disabled we can use the Bootstrap shadow class to add definition to the dialog -->
+
+            <div class="modal-content shadow">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="deleteLocationID">
+
+                    Are you sure that you want to remove the entry for <span id="areYouSureNameLocation"
+                        class="fw-bold"></span>?
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="confirm-delete-location" class="btn btn-outline-secondary myBtn"
+                        data-bs-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-outline-secondary myBtn" data-bs-dismiss="modal">No</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Query Success -->
+    <div class="modal fade animate_slideInDown" id="success-modal" tabindex="-1" role="dialog"
+        aria-labelledby="success-modal-label" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog modal-dialog centered" role="document">
+            <div class="modal-content bg-success text-white">
+                <div class="modal-header bg-success text-white">
+                    <div class="modal-title d-flex flex-row" id="success-modal-label">
+                        <i class="fa-solid fa-check me-1"></i>
+                        <h5 id="success"></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Query Failure -->
+    <div class="modal fade animate_slideInDown" id="failed-modal" tabindex="-1" role="dialog"
+        aria-labelledby="failed-modal-label" aria-hidden="true" data-bs-backdrop="false">
+        <div class="modal-dialog modal-dialog centered" role="document">
+            <div class="modal-content  bg-danger text-white">
+                <div class="modal-header bg-danger text-white">
+                    <div class="modal-title d-flex flex-row bg-danger text-white" id="failed-modal-label">
+                        <i class="fa-solid fa-xmark me-1"></i></i>
+                        <h5 id="failed"></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="libs/js/script.js"></script>
+
+</body>
+
+</html>
